@@ -140,3 +140,22 @@ def get_hist(array, nbins=8):
     gradient_magnitude, gradient_orientation = sobel_numba(array * 256)
     return compute_weighted_histogram(gradient_orientation, gradient_magnitude, nbins)
 
+def concatenate_images(image_list, space_width=20):
+    """horizontal concatenation of a sequence of images
+
+    Args:
+        image_list (list): a list of rgb images
+        space_width (int, optional): space between images. Defaults to 10.
+
+    Returns:
+        np.ndarray: rgb image
+    """
+    # Create an empty canvas for the concatenated image
+    concatenated_image = np.zeros((max(img.shape[0] for img in image_list), 0, 3), dtype=np.uint8)
+
+    # Concatenate images and spaces
+    for img in image_list:
+        space = np.ones((img.shape[0], space_width, 3), dtype=np.uint8) * 41
+        concatenated_image = np.concatenate([concatenated_image, space, img], axis=1)
+
+    return concatenated_image

@@ -1,9 +1,9 @@
-from python.sift_extractor import SIFT
+from sift_extractor import SIFT
 import numpy as np
 import cv2
 from typing import List
 from sklearn.neighbors import NearestNeighbors
-from python.general_functions import show_images, normalize_img
+from general_functions import show_images, normalize_img
 from skimage.color import rgb2gray
 
 
