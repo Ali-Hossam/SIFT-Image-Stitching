@@ -25,12 +25,15 @@ The middle image is taken as the reference image. Then, we obtain the affine mat
 3. Press start to start stitching images.
 4. You can save the image after stitching ends using save button, and the image will be saved in the directory of the application.
 
-![GUI Image](images/UI.png)
+<p align="center">
+    <img width="640" src="images/UI.png">
+</p>
 
 
 ### Stitching Process:
-
-![GUI Usage GIF](images/stitchmaster.gif)
+<p align="center">
+    <img width="640" src="images/stitchmaster.gif">
+</p>
 
 ## Limitations
 
@@ -42,7 +45,7 @@ The middle image is taken as the reference image. Then, we obtain the affine mat
 Ensure you have the required dependencies installed:
 - opencv
 - numpy
-- scipy
+- skimage
 - matplotlib
 - PIL
 - CustomTkinter
