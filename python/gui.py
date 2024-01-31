@@ -1,20 +1,19 @@
-import customtkinter as ctk
-import os
-import cv2
-import time
-from PIL import Image
 from general_functions import concatenate_images
 from panorama_stitching import Panorama
-import threading
+import customtkinter as ctk
+from PIL import Image
 import numpy as np
+import threading
+import cv2
+import os
 
-upload_img = cv2.imread(os.getcwd()+"\\python\\upload.jpeg")
+upload_img = cv2.imread(os.getcwd()+"\\images\\upload.jpeg")
 upload_img_size = (600, 360)
 ctk.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
 ctk.set_default_color_theme(os.getcwd()+"\\python\\dark-blue.json")  # Themes: "blue" (standard), "green", "dark-blue"
 
-stitcher = Panorama()
 is_done_stitching = False
+stitcher = Panorama()
 final_image = np.zeros(2)
 
 def stitch(images):
@@ -29,6 +28,8 @@ class App(ctk.CTk):
         self.geometry(f"{720}x{620}")
         self.title("StitchMaster")
         self.resizable(False, False)
+        icon_path = os.getcwd()+'\\images\\icon1.ico'
+        self.iconbitmap(default=icon_path)
         
         # configure grid layout (4x4)
         self.grid_columnconfigure((0, 1, 2), weight=1)  # Center column
@@ -95,6 +96,9 @@ class App(ctk.CTk):
         # intialize images list
         self.images_list = []
         
+        # image number for saving name
+        self.i = 1
+        
     def upload_images(self, e):
         """
         Event handler for uploading images.
@@ -103,12 +107,15 @@ class App(ctk.CTk):
         e : Event
             Event object.
         """
+        global is_done_stitching
+        
         # Store files paths
         images_path = list(ctk.filedialog.askopenfilenames())
         self.images_list = [cv2.imread(img_path) for img_path in images_path]
         if(len(images_path)):
+            is_done_stitching = False
             self.show_images()
-    
+
     def show_images(self):
         all_images = concatenate_images(self.images_list)
         self.add_image_to_frame(all_images, "images_frame_label", size=upload_img_size)
@@ -157,16 +164,21 @@ class App(ctk.CTk):
                 
     def update_progress(self):
         """ updates progress bar"""
+        global is_done_stitching
         while not is_done_stitching:
-            current_value = self.progress_bar.get()
             self.progress_bar.step()
             self.progress_bar.update_idletasks()
-            time.sleep(0.1)  # Simulate some work being done
+            self.after(100)  # Simulate some work being done
         
         # set progress bar to maximum        
         self.progress_bar.set(1)
          
     def start_stitching(self, e):
+        """runs the stitching process with progress bar"""
+        global final_image
+        # reset progress bar
+        self.progress_bar.set(0)
+        
         # Create a new thread for stitching the image
         stitching_thread = threading.Thread(target=stitch, args=(self.images_list,))
         
@@ -183,15 +195,19 @@ class App(ctk.CTk):
         self.save_button.configure(fg_color="#7e6aff", text_color="#4C067A", text="Save", state="normal")
     
     def save_image(self, e):
+        """save image and reset save button state"""
+        global final_image
+        
         # save image
-        cv2.imwrite("panorama_img.png", img=final_image)
+        cv2.imwrite(f"panorama_img{self.i}.png", img=final_image)
+        self.i += 1
         
         # configure save button text, state, and color
         self.save_button.configure(fg_color="gray", text_color="gray28", text="Saved", state="disabled")
 
         # reset images frame
         self.add_image_to_frame(upload_img, "images_frame_label", upload_img_size)
-
+        
 if __name__ == "__main__":
     app = App()
     app.mainloop()

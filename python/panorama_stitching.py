@@ -1,12 +1,15 @@
-from sift_extractor import SIFT
 import numpy as np
 import cv2
 from typing import List
 from sklearn.neighbors import NearestNeighbors
-from general_functions import show_images, normalize_img
 from skimage.color import rgb2gray
-
-
+try:
+    from general_functions import normalize_img
+    from sift_extractor import SIFT
+except ImportError:
+    from python.general_functions import normalize_img
+    from python.sift_extractor import SIFT
+    
 class Panorama:
     def __init__(self):
         pass

@@ -3,7 +3,11 @@ import numpy as np
 import pandas as pd
 from numba import jit
 from skimage.transform import rotate
-from general_functions import get_hist, sobel_numba, compute_weighted_histogram
+
+try :
+    from general_functions import get_hist
+except ImportError:
+    from python.general_functions import get_hist
 
 class SIFT:
     def __init__(self, sigma=1.2, k=np.sqrt(1.8), num_downsamples=3, doG_thresh=0.003, r=10):
